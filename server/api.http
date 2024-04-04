@@ -2,7 +2,25 @@ POST http://localhost:3333/events
 Content-Type: application/json
 
 {
-  "title": "Unite Summit",
-  "details": "Um evento para falar sobre tecnologia, programação e tudo mais",
-  "maximumAtendees": 100
+  "title": "Evento de uma pessoa",
+  "details": "Esse é um evento para solitarios",
+  "maximumAttendees": 1
 }
+
+###
+
+POST http://localhost:3333/events/94e18ea0-7ee8-4a54-a27c-9f0b96f7d871/attendees
+Content-Type: application/json
+
+{
+  "name": "João da Selva",
+  "email": "joao2@selva.com"
+}
+
+###
+
+GET http://localhost:3333/events/94e18ea0-7ee8-4a54-a27c-9f0b96f7d871
+
+###
+
+GET http://localhost:3333/attendees/2/badge

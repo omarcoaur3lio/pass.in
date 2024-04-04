@@ -1,31 +1,21 @@
-import { PrismaClient } from "@prisma/client";
 import fastify from "fastify";
-import { z } from "zod";
+import {
+  serializerCompiler,
+  validatorCompiler,
+} from "fastify-type-provider-zod";
+import { createEvent } from "./routes/create-event";
+import { registerForEvent } from "./routes/register-for-event";
+import { getEvent } from "./routes/get-event";
+import { getAttendeeBadge } from "./routes/get-attendee-badge";
 
 const app = fastify();
+app.setValidatorCompiler(validatorCompiler);
+app.setSerializerCompiler(serializerCompiler);
 
-const prisma = new PrismaClient({
-  log: ["query"],
-});
-
-app.post("/events", async (request, reply) => {
-  const createEventSchema = z.object({
-    title: z.string(),
-    details: z.string().nullable(),
-    maximumAtendees: z.number().int().positive().nullable(),
-  });
-  const data = createEventSchema.parse(request.body);
-
-  const event = await prisma.event.create({
-    data: {
-      title: data.title,
-      details: data.details,
-      maximumAttendees: data.maximumAtendees,
-      slug: new Date().toISOString(),
-    },
-  });
-  return reply.status(201).send({ eventId: event.id });
-});
+app.register(createEvent)
+app.register(registerForEvent)
+app.register(getEvent);
+app.register(getAttendeeBadge);
 
 app.listen({ port: 3333 }).then(() => {
   console.log("HTTP server running on http://localhost:3333");
