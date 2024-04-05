@@ -31,4 +31,4 @@ GET http://localhost:3333/attendees/2/check-in
 
 ###
 
-GET http://localhost:3333/events/94e18ea0-7ee8-4a54-a27c-9f0b96f7d871/attendees?query=Marco
+GET http://localhost:3333/events/94e18ea0-7ee8-4a54-a27c-9f0b96f7d871/attendees?query=João
