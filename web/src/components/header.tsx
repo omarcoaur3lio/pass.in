@@ -7,7 +7,7 @@ export function Header() {
       <img src={UniteIcon} alt="Unite Icon" />
       <nav className="flex gap-5">
         <NavLink href="/eventos">Eventos</NavLink>
-        <NavLink href="/participantes">Participantes</NavLink>
+        <NavLink href="/participantes" active>Participantes</NavLink>
       </nav>
     </div>
   );

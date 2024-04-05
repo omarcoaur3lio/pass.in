@@ -9,12 +9,12 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:3333/events/94e18ea0-7ee8-4a54-a27c-9f0b96f7d871/attendees
+POST http://localhost:3333/events/e59c1608-97a5-4b0a-b4ab-be0ed6154074/attendees
 Content-Type: application/json
 
 {
-  "name": "João da Selva",
-  "email": "joao2@selva.com"
+  "name": "Jane Doe",
+  "email": "jane@doe.com"
 }
 
 ###
