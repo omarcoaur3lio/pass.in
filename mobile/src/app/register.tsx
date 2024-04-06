@@ -5,17 +5,54 @@ import { colors } from "@/styles/colors";
 import { Button } from "@/components/button";
 import { Link, router } from "expo-router";
 import { useState } from "react";
+import { api } from "@/server/api";
+import axios from "axios";
+import { useBadgeStore } from "@/store/badge-store";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleRegister() {
-    if (!name.trim() || !email.trim()) {
-      return Alert.alert("Atenção", "Por favor, preencha todos os campos.");
+  const badgeStore = useBadgeStore();
+
+  const EVENT_ID = "e59c1608-97a5-4b0a-b4ab-be0ed6154074";
+  async function handleRegister() {
+    try {
+      if (!name.trim() || !email.trim()) {
+        return Alert.alert("Atenção", "Por favor, preencha todos os campos.");
+      }
+
+      setIsLoading(true);
+
+      const registerResponse = await api.post(`/events/${EVENT_ID}/attendees`, {
+        name,
+        email,
+      });
+
+      if (registerResponse.data.attendeeId) {
+        const badgeResponse = await api.get(
+          `/attendees/${registerResponse.data.attendeeId}/badge`
+        );
+
+        badgeStore.save(badgeResponse.data.badge);
+
+        Alert.alert("Sucesso", "Inscricão realizada com sucesso!", [
+          { text: "OK", onPress: () => router.push("/ticket") },
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+      if (axios.isAxiosError(error)) {
+        if (
+          String(error.response?.data.message).includes("already registered")
+        ) {
+          return Alert.alert("Atenção", "Este e-mail ja foi registrado.");
+        }
+      }
+      Alert.alert("Atenção", "Ocorreu um erro ao realizar a inscrição.");
     }
-
-    router.push("/ticket");
   }
 
   return (
@@ -48,7 +85,11 @@ export default function Register() {
             onChangeText={setEmail}
           />
         </Input>
-        <Button title="Realizar inscrição" onPress={handleRegister} />
+        <Button
+          title="Realizar inscrição"
+          onPress={handleRegister}
+          isLoading={isLoading}
+        />
         <Link
           href="/"
           className="text-gray-100 text-base font-bold text-center mt-8"

@@ -4,20 +4,49 @@ import {
   Image,
   ImageBackground,
   TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
+
+import { MotiView } from "moti";
 
 import { Feather } from "@expo/vector-icons";
 import { colors } from "@/styles/colors";
 import { QRCode } from "@/components/qrcode";
+import { BadgeStore } from "@/store/badge-store";
 
 type Props = {
-  avatar?: string;
+  data: BadgeStore;
   onAvatarChange?: () => void;
   onShowQRCode?: () => void;
 };
-export function Credential({ avatar, onAvatarChange, onShowQRCode }: Props) {
+export function Credential({ data, onAvatarChange, onShowQRCode }: Props) {
+  const { height } = useWindowDimensions();
   return (
-    <View className="w-full self-stretch items-center">
+    <MotiView
+      className="w-full self-stretch items-center"
+      from={{
+        opacity: 0,
+        translateY: -height,
+        rotateZ: "50deg",
+        rotateX: "30deg",
+        rotateY: "30deg",
+      }}
+      animate={{
+        opacity: 1,
+        translateY: 0,
+        rotateZ: "0deg",
+        rotateX: "0deg",
+        rotateY: "0deg",
+      }}
+      transition={{
+        type: "spring",
+        damping: 20,
+        rotateZ: {
+          damping: 15,
+          mass: 3,
+        },
+      }}
+    >
       <Image
         source={require("@/assets/ticket/band.png")}
         className="w-24 h-52 z-10"
@@ -28,17 +57,19 @@ export function Credential({ avatar, onAvatarChange, onShowQRCode }: Props) {
           className="px-6 py-8 h-40 items-center self-stretch border-b border border-white/10 overflow-hidden rounded-t-2xl"
         >
           <View className="w-full flex-row items-center justify-between">
-            <Text className="text-zinc-50 text-sm font-bold">Unite Summit</Text>
-            <Text className="text-zinc-50 text-sm font-bold">#12345</Text>
+            <Text className="text-zinc-50 text-sm font-bold">
+              {data.eventTitle}
+            </Text>
+            <Text className="text-zinc-50 text-sm font-bold">#{data.id}</Text>
           </View>
 
           <View className="w-40 h-40 rounded-full bg-black" />
         </ImageBackground>
 
-        {avatar ? (
+        {data.avatar ? (
           <TouchableOpacity onPress={onAvatarChange} activeOpacity={0.9}>
             <Image
-              source={{ uri: avatar }}
+              source={{ uri: data.avatar }}
               className="w-36 h-36 rounded-full -mt-24"
             />
           </TouchableOpacity>
@@ -53,10 +84,10 @@ export function Credential({ avatar, onAvatarChange, onShowQRCode }: Props) {
         )}
 
         <Text className="font-bold text-2xl text-zinc-50 mt-4">
-          Marco Aurélio
+          {data.name}
         </Text>
         <Text className="font-regular text-base text-zinc-300 mb-4">
-          marcoaurelio@teste.com
+          {data.email}
         </Text>
 
         <QRCode value="teste" size={120} />
@@ -71,6 +102,6 @@ export function Credential({ avatar, onAvatarChange, onShowQRCode }: Props) {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </MotiView>
   );
 }
